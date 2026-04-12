@@ -1,0 +1,16 @@
+{
+    "name": "pkm-bot",
+    "version": "1.0.0",
+    "description": "",
+    "main": "bot.js",
+    "scripts": {
+        "start": "node bot.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@supabase/supabase-js": "^2.101.1",
+        "node-telegram-bot-api": "^0.67.0"
+    }
+}
