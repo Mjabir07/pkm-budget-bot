@@ -8,87 +8,23 @@ const SUPABASE_KEY = process.env.SUPABASE_KEY;
 const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true });
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ─── CATEGORIES & KEYWORDS ────────────────────────────────
-const CATEGORIES = {
-  // Food & Dining
-  food: "Food & Dining", lunch: "Food & Dining", dinner: "Food & Dining",
-  breakfast: "Food & Dining", shawarma: "Food & Dining", broast: "Food & Dining",
-  grill: "Food & Dining", burger: "Food & Dining", pizza: "Food & Dining",
-  biryani: "Food & Dining", rice: "Food & Dining", chicken: "Food & Dining",
-  restaurant: "Food & Dining", cafe: "Food & Dining", coffee: "Food & Dining",
-  tea: "Food & Dining", juice: "Food & Dining", outside: "Food & Dining",
-
-  // Transport
-  metro: "Transport", taxi: "Transport", uber: "Transport", careem: "Transport",
-  bus: "Transport", transport: "Transport", fuel: "Transport", petrol: "Transport",
-  parking: "Transport", toll: "Transport", salik: "Transport",
-
-  // Grocery & Supermarket
-  grocery: "Grocery & Supermarket", nesto: "Grocery & Supermarket",
-  lulu: "Grocery & Supermarket", carrefour: "Grocery & Supermarket",
-  spinneys: "Grocery & Supermarket", supermarket: "Grocery & Supermarket",
-  vegetables: "Grocery & Supermarket", fruits: "Grocery & Supermarket",
-  market: "Grocery & Supermarket", baqala: "Grocery & Supermarket",
-
-  // Rent & Housing
-  rent: "Rent & Housing", electricity: "Rent & Housing", dewa: "Rent & Housing",
-  water: "Rent & Housing", internet: "Rent & Housing", wifi: "Rent & Housing",
-  maintenance: "Rent & Housing", housing: "Rent & Housing",
-
-  // Shopping & Clothes
-  shopping: "Shopping & Clothes", tamara: "Shopping & Clothes",
-  clothes: "Shopping & Clothes", shirt: "Shopping & Clothes",
-  shoes: "Shopping & Clothes", amazon: "Shopping & Clothes",
-  noon: "Shopping & Clothes", mall: "Shopping & Clothes",
-
-  // Fashion
-  fashion: "Fashion", watch: "Fashion", bag: "Fashion", wallet: "Fashion",
-  perfume: "Fashion", accessories: "Fashion", sunglasses: "Fashion",
-  belt: "Fashion", cap: "Fashion",
-
-  // Cosmetics
-  cosmetics: "Cosmetics", skincare: "Cosmetics", haircut: "Cosmetics",
-  salon: "Cosmetics", barber: "Cosmetics", shampoo: "Cosmetics",
-  cream: "Cosmetics", makeup: "Cosmetics", lotion: "Cosmetics",
-
-  // Snacks & Beverages
-  snacks: "Snacks & Beverages", biscuit: "Snacks & Beverages",
-  chips: "Snacks & Beverages", water: "Snacks & Beverages",
-  drink: "Snacks & Beverages", energy: "Snacks & Beverages",
-  pepsi: "Snacks & Beverages", coke: "Snacks & Beverages",
-  redbull: "Snacks & Beverages", sandwich: "Snacks & Beverages",
-  peanut: "Snacks & Beverages", popcorn: "Snacks & Beverages",
-
-  // Dessert & Sweets
-  icecream: "Dessert & Sweets", ice: "Dessert & Sweets",
-  dessert: "Dessert & Sweets", chocolate: "Dessert & Sweets",
-  sprinkles: "Dessert & Sweets", cake: "Dessert & Sweets",
-  sweet: "Dessert & Sweets", candy: "Dessert & Sweets",
-  kunafa: "Dessert & Sweets", baklava: "Dessert & Sweets",
-
-  // Health & Medical
-  health: "Health & Medical", medical: "Health & Medical",
-  doctor: "Health & Medical", pharmacy: "Health & Medical",
-  medicine: "Health & Medical", tablet: "Health & Medical",
-  hospital: "Health & Medical", clinic: "Health & Medical",
-  vitamin: "Health & Medical", gym: "Health & Medical",
-
-  // Entertainment
-  entertainment: "Entertainment", movie: "Entertainment",
-  cinema: "Entertainment", netflix: "Entertainment",
-  spotify: "Entertainment", game: "Entertainment",
-  bowling: "Entertainment", park: "Entertainment",
-  ticket: "Entertainment", event: "Entertainment",
-
-  // Family & Kids
-  family: "Family & Kids", kids: "Family & Kids",
-  baby: "Family & Kids", school: "Family & Kids",
-  toys: "Family & Kids", diapers: "Family & Kids",
-  hawwa: "Family & Kids", milk: "Family & Kids",
-  formula: "Family & Kids", stroller: "Family & Kids",
+// ─── CATEGORIES & AUTO-DETECTION KEYWORDS ─────────────────
+const KEYWORDS = {
+  "Food & Dining": ["food","lunch","dinner","breakfast","shawarma","broast","grill","burger","pizza","biryani","rice","chicken","restaurant","cafe","coffee","tea","juice","outside","meal","eating","iftar","suhoor"],
+  "Transport": ["metro","taxi","uber","careem","bus","transport","fuel","petrol","parking","toll","salik","ride","cab"],
+  "Grocery & Supermarket": ["grocery","nesto","lulu","carrefour","spinneys","supermarket","vegetables","fruits","market","baqala","shop","hypermarket"],
+  "Rent & Housing": ["rent","electricity","dewa","water","internet","wifi","maintenance","housing","flat","apartment","villa","ac","repair"],
+  "Shopping & Clothes": ["shopping","tamara","clothes","shirt","shoes","amazon","noon","mall","tshirt","trouser","jacket","dress"],
+  "Fashion": ["fashion","watch","bag","wallet","perfume","accessories","sunglasses","belt","cap","bracelet","ring","necklace"],
+  "Cosmetics": ["cosmetics","skincare","haircut","salon","barber","shampoo","cream","makeup","lotion","facewash","deodorant","razor"],
+  "Snacks & Beverages": ["snacks","biscuit","chips","drink","energy","pepsi","coke","redbull","sandwich","peanut","popcorn","crackers","nuts","7up"],
+  "Dessert & Sweets": ["icecream","ice cream","dessert","chocolate","sprinkles","cake","sweet","candy","kunafa","baklava","brownie","waffle"],
+  "Health & Medical": ["health","medical","doctor","pharmacy","medicine","tablet","hospital","clinic","vitamin","gym","fitness","lab","test","xray"],
+  "Entertainment": ["entertainment","movie","cinema","netflix","spotify","game","bowling","park","ticket","event","concert","show","funzone"],
+  "Family & Kids": ["family","kids","baby","school","toys","diapers","hawwa","milk","formula","stroller","children","daughter","son","stationary"],
+  "Others": [],
 };
 
-// ─── CATEGORY ICONS ───────────────────────────────────────
 const CAT_ICONS = {
   "Food & Dining": "🍽️",
   "Transport": "🚇",
@@ -105,26 +41,62 @@ const CAT_ICONS = {
   "Others": "💰",
 };
 
-// ─── ALL VALID CATEGORIES LIST ────────────────────────────
-const VALID_CATEGORIES = Object.values(CAT_ICONS);
+const VALID_CATEGORIES = Object.keys(CAT_ICONS);
 
 function guessCategory(desc) {
-  const lower = desc.toLowerCase().replace(/[^a-z]/g, "");
-  for (const [key, cat] of Object.entries(CATEGORIES)) {
-    if (lower.includes(key)) return cat;
+  const lower = desc.toLowerCase();
+  for (const [cat, keywords] of Object.entries(KEYWORDS)) {
+    if (cat === "Others") continue;
+    for (const kw of keywords) {
+      if (lower.includes(kw)) return cat;
+    }
   }
   return "Others";
 }
 
 function formatAED(n) { return `AED ${Number(n).toFixed(2)}`; }
+
 function todayDate() { return new Date().toISOString().split("T")[0]; }
+
 function formatDate(d) {
   return new Date(d + "T00:00:00").toLocaleDateString("en-GB", {
     day: "2-digit", month: "short", year: "numeric"
   });
 }
 
-// ─── SEND LONG MESSAGE IN CHUNKS ──────────────────────────
+// Parse date from DD/MM or DD/MM/YYYY format
+function parseDate(str) {
+  // DD/MM format — assume current year
+  const short = str.match(/^(\d{1,2})\/(\d{1,2})$/);
+  if (short) {
+    const year = new Date().getFullYear();
+    const month = String(short[2]).padStart(2, "0");
+    const day = String(short[1]).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+  // DD/MM/YYYY format
+  const full = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (full) {
+    const month = String(full[2]).padStart(2, "0");
+    const day = String(full[1]).padStart(2, "0");
+    return `${full[3]}-${month}-${day}`;
+  }
+  return null;
+}
+
+// Find category from partial input
+function matchCategory(input) {
+  if (!input) return null;
+  const lower = input.toLowerCase().trim();
+  // Exact match first
+  const exact = VALID_CATEGORIES.find(c => c.toLowerCase() === lower);
+  if (exact) return exact;
+  // Partial match
+  const partial = VALID_CATEGORIES.find(c => c.toLowerCase().includes(lower));
+  if (partial) return partial;
+  return null;
+}
+
 async function sendLong(chatId, msg) {
   if (msg.length <= 4000) return bot.sendMessage(chatId, msg, { parse_mode: "Markdown" });
   const lines = msg.split("\n");
@@ -144,74 +116,147 @@ bot.on("message", async (msg) => {
   const chatId = msg.chat.id;
   const text = msg.text?.trim();
   if (!text) return;
-  const lower = text.toLowerCase();
+  const lower = text.toLowerCase().trim();
 
   // ── HELP ──────────────────────────────────────────────
   if (lower === "/start" || lower === "/help") {
     return bot.sendMessage(chatId, `
-👋 *PKM Budget Tracker*
+👋 *PKM Budget Tracker v4*
 _Your personal expense manager_
 
-━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━
 
-*➕ Add an expense:*
+*➕ ADD EXPENSE:*
 \`Description Amount\`
+\`Description Amount DD/MM\`
 \`Description Amount Category\`
+\`Description Amount Category DD/MM\`
 
 *Examples:*
-• \`Lunch 25\`
-• \`Metro 6\`
-• \`Nesto 87 Grocery & Supermarket\`
-• \`Gym 150 Health & Medical\`
+• \`Lunch 25\` — today, auto category
+• \`Lunch 25 01/05\` — May 1st
+• \`Metro 6 Transport\` — with category
+• \`Rent 2500 Rent & Housing 03/05\` — full detail
+• \`Nesto 87 Grocery & Supermarket 02/05\`
 
-━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━
 
-*📊 View commands:*
-• \`today\` — today's expenses
-• \`yesterday\` — yesterday
-• \`week\` — last 7 days
-• \`month\` — this month
-• \`all\` — every expense ever
-• \`report\` — full summary & stats
-• \`total\` — grand total
-• \`list\` — last 10 entries
-• \`cats\` — by category
-• \`delete 5\` — delete entry #5
+*✏️ EDIT EXPENSE:*
+\`edit ID desc New description\`
+\`edit ID amount 30\`
+\`edit ID cat Food & Dining\`
+\`edit ID date 01/05\`
 
-━━━━━━━━━━━━━━━━━━━━━━
+*Examples:*
+• \`edit 5 desc Lunch at work\`
+• \`edit 5 amount 30\`
+• \`edit 5 cat Transport\`
+• \`edit 5 date 01/05\`
 
-*🏷️ Your categories:*
-🍽️ Food & Dining
-🚇 Transport
-🛒 Grocery & Supermarket
-🏠 Rent & Housing
-🛍️ Shopping & Clothes
-👔 Fashion
-💄 Cosmetics
-🍿 Snacks & Beverages
-🍦 Dessert & Sweets
-💊 Health & Medical
-🎬 Entertainment
-👨‍👩‍👧 Family & Kids
-💰 Others
+━━━━━━━━━━━━━━━━
+
+*📊 VIEW COMMANDS:*
+• \`today\` • \`yesterday\` • \`week\`
+• \`month\` • \`all\` • \`list\`
+• \`report\` • \`total\` • \`cats\`
+• \`view 5\` — see single entry
+• \`delete 5\` — delete entry
+
+━━━━━━━━━━━━━━━━
+
+*🏷️ CATEGORIES:*
+• \`categories\` — see full list
     `, { parse_mode: "Markdown" });
   }
 
   // ── CATEGORIES LIST ───────────────────────────────────
-  if (lower === "categories" || lower === "cats list") {
+  if (lower === "categories") {
     let m = `🏷️ *Your Categories*\n\n`;
-    Object.entries(CAT_ICONS).forEach(([cat, icon]) => { m += `${icon} ${cat}\n`; });
-    m += `\n_Type category name when adding expense_\n_Example: \`Gym 150 Health & Medical\`_`;
+    VALID_CATEGORIES.forEach(cat => { m += `${CAT_ICONS[cat]} ${cat}\n`; });
+    m += `\n_Use full name when adding:_\n\`Gym 150 Health & Medical\`\n\`Nesto 87 Grocery & Supermarket\``;
     return bot.sendMessage(chatId, m, { parse_mode: "Markdown" });
+  }
+
+  // ── VIEW SINGLE ENTRY ─────────────────────────────────
+  if (lower.startsWith("view ")) {
+    const id = parseInt(text.split(" ")[1]);
+    if (isNaN(id)) return bot.sendMessage(chatId, "❌ Usage: `view 5`", { parse_mode: "Markdown" });
+    const { data, error } = await supabase.from("expenses").select("*").eq("id", id).single();
+    if (error || !data) return bot.sendMessage(chatId, `❌ Expense #${id} not found.`);
+    return bot.sendMessage(chatId,
+      `🔍 *Expense #${id}*\n\n📝 *Description:* ${data.description}\n💵 *Amount:* ${formatAED(data.amount)}\n🏷️ *Category:* ${CAT_ICONS[data.category] || "💰"} ${data.category}\n📅 *Date:* ${formatDate(data.date)}\n\n_To edit: \`edit ${id} desc New name\`_`,
+      { parse_mode: "Markdown" }
+    );
   }
 
   // ── DELETE ────────────────────────────────────────────
   if (lower.startsWith("delete ") || lower.startsWith("del ")) {
     const id = parseInt(text.split(" ")[1]);
     if (isNaN(id)) return bot.sendMessage(chatId, "❌ Usage: `delete 5`", { parse_mode: "Markdown" });
+    // First get the entry so we can confirm what was deleted
+    const { data: entry } = await supabase.from("expenses").select("*").eq("id", id).single();
     const { error } = await supabase.from("expenses").delete().eq("id", id);
     if (error) return bot.sendMessage(chatId, `❌ ${error.message}`);
+    if (entry) {
+      return bot.sendMessage(chatId, `🗑️ *Deleted #${id}*\n${entry.description} — ${formatAED(entry.amount)} — ${formatDate(entry.date)}`);
+    }
     return bot.sendMessage(chatId, `🗑️ Expense #${id} deleted.`);
+  }
+
+  // ── EDIT ──────────────────────────────────────────────
+  // Format: edit ID field value
+  if (lower.startsWith("edit ")) {
+    const parts = text.split(" ");
+    const id = parseInt(parts[1]);
+    const field = parts[2]?.toLowerCase();
+    const value = parts.slice(3).join(" ").trim();
+
+    if (isNaN(id) || !field || !value) {
+      return bot.sendMessage(chatId,
+        `❌ *Edit format:*\n\`edit ID field value\`\n\nFields: \`desc\`, \`amount\`, \`cat\`, \`date\`\n\nExamples:\n• \`edit 5 desc Lunch at office\`\n• \`edit 5 amount 30\`\n• \`edit 5 cat Transport\`\n• \`edit 5 date 01/05\``,
+        { parse_mode: "Markdown" }
+      );
+    }
+
+    let updateObj = {};
+
+    if (field === "desc" || field === "description") {
+      updateObj.description = value;
+
+    } else if (field === "amount" || field === "amt") {
+      const amt = parseFloat(value);
+      if (isNaN(amt) || amt <= 0) return bot.sendMessage(chatId, "❌ Invalid amount. Use a number like `30` or `15.50`", { parse_mode: "Markdown" });
+      updateObj.amount = amt;
+
+    } else if (field === "cat" || field === "category") {
+      const matched = matchCategory(value);
+      if (!matched) {
+        return bot.sendMessage(chatId,
+          `❌ Category not found: *${value}*\n\nType \`categories\` to see full list.`,
+          { parse_mode: "Markdown" }
+        );
+      }
+      updateObj.category = matched;
+
+    } else if (field === "date") {
+      const parsed = parseDate(value);
+      if (!parsed) return bot.sendMessage(chatId, "❌ Invalid date format. Use `DD/MM` like `01/05` or `01/05/2026`", { parse_mode: "Markdown" });
+      updateObj.date = parsed;
+
+    } else {
+      return bot.sendMessage(chatId,
+        `❌ Unknown field: *${field}*\n\nValid fields: \`desc\`, \`amount\`, \`cat\`, \`date\``,
+        { parse_mode: "Markdown" }
+      );
+    }
+
+    const { data, error } = await supabase.from("expenses").update(updateObj).eq("id", id).select().single();
+    if (error || !data) return bot.sendMessage(chatId, `❌ Could not update #${id}. Check the ID is correct.`);
+
+    return bot.sendMessage(chatId,
+      `✅ *Updated #${id}*\n\n📝 ${data.description}\n💵 ${formatAED(data.amount)}\n🏷️ ${CAT_ICONS[data.category] || "💰"} ${data.category}\n📅 ${formatDate(data.date)}`,
+      { parse_mode: "Markdown" }
+    );
   }
 
   // ── TODAY ─────────────────────────────────────────────
@@ -221,7 +266,10 @@ _Your personal expense manager_
     if (!data.length) return bot.sendMessage(chatId, "📭 No expenses today yet.\n\nTry: `Lunch 25`", { parse_mode: "Markdown" });
     const total = data.reduce((s, e) => s + e.amount, 0);
     let m = `📅 *Today — ${formatDate(todayDate())}*\n\n`;
-    data.forEach(e => { m += `${CAT_ICONS[e.category] || "💰"} ${e.description} — *${formatAED(e.amount)}*\n_${e.category}_ \`#${e.id}\`\n\n`; });
+    data.forEach(e => {
+      m += `${CAT_ICONS[e.category] || "💰"} *${e.description}* — ${formatAED(e.amount)}\n`;
+      m += `   _${e.category}_ \`#${e.id}\`\n\n`;
+    });
     m += `━━━━━━━━━━━━━━━━\n💰 *Total: ${formatAED(total)}*`;
     return bot.sendMessage(chatId, m, { parse_mode: "Markdown" });
   }
@@ -235,7 +283,10 @@ _Your personal expense manager_
     if (!data.length) return bot.sendMessage(chatId, "📭 No expenses yesterday.");
     const total = data.reduce((s, e) => s + e.amount, 0);
     let m = `📅 *Yesterday — ${formatDate(date)}*\n\n`;
-    data.forEach(e => { m += `${CAT_ICONS[e.category] || "💰"} ${e.description} — *${formatAED(e.amount)}*\n_${e.category}_ \`#${e.id}\`\n\n`; });
+    data.forEach(e => {
+      m += `${CAT_ICONS[e.category] || "💰"} *${e.description}* — ${formatAED(e.amount)}\n`;
+      m += `   _${e.category}_ \`#${e.id}\`\n\n`;
+    });
     m += `━━━━━━━━━━━━━━━━\n💰 *Total: ${formatAED(total)}*`;
     return bot.sendMessage(chatId, m, { parse_mode: "Markdown" });
   }
@@ -283,7 +334,7 @@ _Your personal expense manager_
   if (lower === "all") {
     const { data, error } = await supabase.from("expenses").select("*").order("date", { ascending: false }).order("created_at", { ascending: false });
     if (error) return bot.sendMessage(chatId, `❌ ${error.message}`);
-    if (!data.length) return bot.sendMessage(chatId, "📭 No expenses yet.\n\nStart by typing: `Lunch 25`", { parse_mode: "Markdown" });
+    if (!data.length) return bot.sendMessage(chatId, "📭 No expenses yet.\n\nStart: `Lunch 25`", { parse_mode: "Markdown" });
     const total = data.reduce((s, e) => s + e.amount, 0);
     const byDate = {};
     data.forEach(e => { if (!byDate[e.date]) byDate[e.date] = []; byDate[e.date].push(e); });
@@ -317,7 +368,10 @@ _Your personal expense manager_
     if (error) return bot.sendMessage(chatId, `❌ ${error.message}`);
     if (!data.length) return bot.sendMessage(chatId, "📭 No expenses yet.");
     let m = `📋 *Last 10 Expenses*\n\n`;
-    data.forEach(e => { m += `${CAT_ICONS[e.category] || "💰"} *${e.description}* — ${formatAED(e.amount)}\n_${e.category} | ${formatDate(e.date)}_ \`#${e.id}\`\n\n`; });
+    data.forEach(e => {
+      m += `${CAT_ICONS[e.category] || "💰"} *${e.description}* — ${formatAED(e.amount)}\n`;
+      m += `   _${e.category} | ${formatDate(e.date)}_ \`#${e.id}\`\n\n`;
+    });
     return bot.sendMessage(chatId, m, { parse_mode: "Markdown" });
   }
 
@@ -333,7 +387,7 @@ _Your personal expense manager_
     let m = `🏷️ *Spending by Category*\n\n`;
     sorted.forEach(([cat, amt]) => {
       const pct = ((amt / total) * 100).toFixed(1);
-      const filled = Math.round(pct / 5);
+      const filled = Math.max(0, Math.min(20, Math.round(pct / 5)));
       const bar = "▓".repeat(filled) + "░".repeat(20 - filled);
       m += `${CAT_ICONS[cat] || "💰"} *${cat}*\n${bar} ${pct}%\n${formatAED(amt)}\n\n`;
     });
@@ -371,49 +425,67 @@ _Your personal expense manager_
   }
 
   // ── ADD EXPENSE ───────────────────────────────────────
-  // Format: Description Amount [Category]
-  const match = text.match(/^(.+?)\s+([\d.]+)\s*(.*)$/);
-  if (match) {
-    const description = match[1].trim();
-    const amount = parseFloat(match[2]);
-    const catRaw = match[3]?.trim();
+  // Formats supported:
+  // Description Amount
+  // Description Amount DD/MM
+  // Description Amount Category
+  // Description Amount Category DD/MM
+  const addMatch = text.match(/^(.+?)\s+([\d.]+)\s*(.*)$/);
+  if (addMatch) {
+    const description = addMatch[1].trim();
+    const amount = parseFloat(addMatch[2]);
+    const rest = addMatch[3]?.trim() || "";
 
     if (isNaN(amount) || amount <= 0) {
       return bot.sendMessage(chatId, "❌ Invalid amount.\n\nTry: `Lunch 25`", { parse_mode: "Markdown" });
     }
 
-    // Find category
     let category = "Others";
-    if (catRaw) {
-      // Check if typed category matches any valid category (case insensitive)
-      const matchedCat = VALID_CATEGORIES.find(c => c.toLowerCase() === catRaw.toLowerCase());
-      if (matchedCat) {
-        category = matchedCat;
+    let date = todayDate();
+
+    if (rest) {
+      // Check if last token is a date (DD/MM or DD/MM/YYYY)
+      const tokens = rest.split(" ");
+      const lastToken = tokens[tokens.length - 1];
+      const parsedDate = parseDate(lastToken);
+
+      if (parsedDate) {
+        // Last token is a date
+        date = parsedDate;
+        const catPart = tokens.slice(0, -1).join(" ").trim();
+        if (catPart) {
+          const matched = matchCategory(catPart);
+          category = matched || guessCategory(catPart) || guessCategory(description);
+        } else {
+          category = guessCategory(description);
+        }
       } else {
-        // Try to guess from the typed category text
-        category = guessCategory(catRaw) !== "Others" ? guessCategory(catRaw) : guessCategory(description);
+        // No date — rest is category
+        const matched = matchCategory(rest);
+        category = matched || guessCategory(rest) || guessCategory(description);
       }
     } else {
       category = guessCategory(description);
     }
 
     const { data, error } = await supabase.from("expenses")
-      .insert([{ date: todayDate(), description, amount, category }])
+      .insert([{ date, description, amount, category }])
       .select().single();
 
     if (error) return bot.sendMessage(chatId, `❌ Error saving: ${error.message}`);
 
+    const isToday = date === todayDate();
     return bot.sendMessage(chatId,
-      `✅ *Saved!*\n\n${CAT_ICONS[category] || "💰"} *${description}*\n💵 ${formatAED(amount)}\n🏷️ ${category}\n📅 ${formatDate(todayDate())}\n\n_Type \`today\` to see today's expenses_`,
+      `✅ *Saved!*\n\n${CAT_ICONS[category] || "💰"} *${description}*\n💵 ${formatAED(amount)}\n🏷️ ${category}\n📅 ${formatDate(date)}${isToday ? " _(Today)_" : ""}\n\n_Type \`today\` or \`list\` to view_`,
       { parse_mode: "Markdown" }
     );
   }
 
   // ── UNKNOWN ───────────────────────────────────────────
   bot.sendMessage(chatId,
-    `❓ I didn't understand that.\n\n*To add expense:* \`Lunch 25\`\n*To view:* \`today\`, \`month\`, \`report\`\n*All commands:* \`/help\``,
+    `❓ I didn't understand that.\n\n*Add:* \`Lunch 25\` or \`Lunch 25 01/05\`\n*View:* \`today\`, \`month\`, \`report\`\n*Edit:* \`edit 5 amount 30\`\n*Help:* \`/help\``,
     { parse_mode: "Markdown" }
   );
 });
 
-console.log("🤖 PKM Budget Bot v3 running with professional categories...");
+console.log("🤖 PKM Budget Bot v4 — running with date & edit support...");
