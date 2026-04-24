@@ -100,6 +100,13 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'DM Sans'
 @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-8px)}}
 .empty{text-align:center;padding:60px 20px;color:var(--text3)}
 .empty-icon{font-size:48px;margin-bottom:12px}
+
+.exp-wrap{position:relative;overflow:hidden;border-radius:0;margin-bottom:0}
+.exp-wrap .exp-row{transition:transform 0.25s ease;background:var(--bg2);position:relative;z-index:1;border-bottom:1px solid var(--border)}
+.exp-wrap .swipe-del{position:absolute;right:0;top:0;bottom:0;width:80px;background:#E53935;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;cursor:pointer;z-index:0}
+.exp-wrap .swipe-del svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round}
+.exp-wrap .swipe-del span{font-size:11px;color:#fff;font-weight:600;letter-spacing:1px}
+.exp-wrap.swiped .exp-row{transform:translateX(-80px)}
 </style>
 </head>
 <body>
@@ -289,14 +296,49 @@ function renderExp() {
     const dt=items.reduce((s,e)=>s+e.amount,0);
     h+=`<div class="date-header"><span class="date-label">📅 ${fDate(date)}</span><span class="date-total">${fAED(dt)}</span></div>`;
     items.forEach(e=>{
-      h+=`<div class="exp-row">
-        <div class="exp-icon">${ICONS[e.category]||'💰'}</div>
-        <div class="exp-info"><div class="exp-desc">${e.description}</div><div class="exp-cat">${e.category}</div></div>
-        <div class="exp-right"><div class="exp-amt">${fAED(e.amount)}</div>
-        <div class="exp-del" onclick="delExp(${e.id})">🗑️ delete</div></div></div>`;
+      h+=`<div class="exp-wrap" id="wrap-${e.id}">
+        <div class="swipe-del" onclick="delExp(${e.id})">
+          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          <span>DELETE</span>
+        </div>
+        <div class="exp-row" id="row-${e.id}">
+          <div class="exp-icon">${ICONS[e.category]||'💰'}</div>
+          <div class="exp-info"><div class="exp-desc">${e.description}</div><div class="exp-cat">${e.category}</div></div>
+          <div class="exp-right"><div class="exp-amt">${fAED(e.amount)}</div><div class="exp-id" style="font-size:10px;color:var(--text3)">#${e.id}</div></div>
+        </div>
+      </div>`;
     });
   });
   document.getElementById('content').innerHTML=h;
+  initSwipe();
+}
+
+function initSwipe(){
+  let startX=0, startY=0, activeWrap=null;
+  document.querySelectorAll('.exp-row').forEach(row=>{
+    const wrap=row.closest('.exp-wrap');
+    row.addEventListener('touchstart',e=>{
+      startX=e.touches[0].clientX;
+      startY=e.touches[0].clientY;
+      activeWrap=wrap;
+    },{passive:true});
+    row.addEventListener('touchmove',e=>{
+      const dx=e.touches[0].clientX-startX;
+      const dy=Math.abs(e.touches[0].clientY-startY);
+      if(dy>20){return;}
+      if(dx<-20){
+        document.querySelectorAll('.exp-wrap').forEach(w=>{if(w!==wrap)w.classList.remove('swiped');});
+        wrap.classList.add('swiped');
+      } else if(dx>20){
+        wrap.classList.remove('swiped');
+      }
+    },{passive:true});
+  });
+  document.getElementById('content').addEventListener('touchstart',e=>{
+    if(!e.target.closest('.exp-wrap')){
+      document.querySelectorAll('.exp-wrap').forEach(w=>w.classList.remove('swiped'));
+    }
+  },{passive:true});
 }
 
 function setF(c){filterCat=c;renderExp();}
